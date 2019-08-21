@@ -144,6 +144,7 @@ export default {
         'payStatus': payStatus,
         'type': 'wechatPay',
         'totalFee': amount,
+        'actFee':this.amount.recharge,
         'title': this.type
       }
       if (this.type === '水机充值') {
