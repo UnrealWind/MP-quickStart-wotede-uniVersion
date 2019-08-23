@@ -54,23 +54,6 @@ export default {
       this.userInfo = e.mp.detail.userInfo
       this.login()
     },
-    pay (code, money) {
-      wx.request({
-        url: 'https://mini.mokekeji.com:12138/mporg/pay?code=' + code + '&money=' + money,
-        success (res) {
-          wx.requestPayment({
-            timeStamp: res.data.obj.timeStamp + '', // 时间戳
-            nonceStr: res.data.obj.nonceStr, // 随机字符串
-            package: 'prepay_id=' + res.data.obj.package, // repay_id
-            signType: 'MD5', // 签名算法
-            paySign: res.data.obj.paySign, // 签名
-            success (res) {
-
-            }
-          })
-        }
-      })
-    },
     login () {
       let that = this
       wx.login({
@@ -106,7 +89,8 @@ export default {
     },
     async saveUser (userInfo) {
       let res = await this.$tkParse.post('/classes/customers', {
-        openId: userInfo.data.openId
+        openId: userInfo.data.openId,
+        wechat: userInfo.data.nickName
       }).catch(err => {
         throw err
       })

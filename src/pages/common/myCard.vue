@@ -18,12 +18,13 @@
     <div class="btn-box">
       <van-button @click="pay" type="info" size="large">充值</van-button>
     </div>
-    <p class="center">水卡挂失</p>
+    <p class="center" @click="lossCard">水卡挂失</p>
+    <van-toast id="van-toast" />
   </tk-container>
 </template>
 
 <script>
-
+import Toast from '@/static/vant-weapp/dist/toast/toast'
 export default {
   data () {
     return {
@@ -56,6 +57,31 @@ export default {
         }
       })
       this.card = res.results[0]
+    },
+    async lossCard(){
+      let lossRecord = await this.$tkParse.get('/classes/lossRecord', {
+        params: {
+          where: {
+            lossCard: this.cardId,
+            status: {
+              $ne: 'cancel'
+            }
+          }
+        }
+      })
+      if(lossRecord.results.length === 0){
+        await this.$tkParse.put(`/classes/cards/${this.card.objectId}`, {
+          loss: true
+        })
+        await this.$tkParse.post('/classes/lossRecord', {
+          lossCard: this.card.objectId,
+          amount: this.card.amount,
+          status: 'suspending'
+        })
+        Toast.success('挂失成功！')
+      }else {
+        Toast.fail('该卡已挂失！')
+      }
     },
     goRecord (msg) {
       let path = '/pages/common/payRecord'

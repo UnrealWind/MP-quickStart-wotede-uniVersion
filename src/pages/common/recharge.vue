@@ -71,15 +71,24 @@ export default {
       this.status = 'success'
     },
     async getRecharge () {
+      let d = new Date();
+      d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());
       let res = await this.$tkParse.get('/classes/preferential', {
         params: {
-          order: 'recharge'
+          order: 'recharge',
+          where :{
+            'endDate': {
+              $gte: {
+                '__type': 'Date',
+                'iso': d.toISOString()
+              }
+            }
+          }
         }
       })
       let amounts = []
-
       res.results.forEach((n, i) => {
-        if (this.type === '水机充值' && this.deviceInfo.deviceId && n.devices && n.devices.indexOf(this.deviceInfo.objectId) > -1) {
+        if (this.type === '水机充值' && this.deviceInfo.deviceId && n.devices && n.devices.indexOf(this.deviceInfo.objectId) > -1 && !n.cardPay) {
           amounts.push(n)
         } else if (this.type === '水卡充值' && n.cardPay) {
           amounts.push(n)
@@ -144,7 +153,7 @@ export default {
         'payStatus': payStatus,
         'type': 'wechatPay',
         'totalFee': amount,
-        'actFee':this.amount.recharge,
+        'actFee':Number(this.amount.recharge),
         'title': this.type
       }
       if (this.type === '水机充值') {
