@@ -105,14 +105,6 @@ export default {
         Toast.fail('无法获取设备信息，请重试')
       })
 
-      await this.$cloudAjax.post('/index/refreshStatus', {
-        'deviceId': device.results[0].deviceId,
-        'authInfo': device.results[0].authInfo,
-        'objectId': device.results[0].objectId
-      }).catch((e) => {
-        Toast.fail('设备刷新失败')
-      })
-
       if (device) {
         this.$store.commit('setDeviceInfo', device.results[0])
         let path = '/pages/common/machineInfo'

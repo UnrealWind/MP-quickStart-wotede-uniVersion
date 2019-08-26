@@ -17,7 +17,7 @@
     </div>
     <div class="record">
       <span>
-        <tk-icon :size="30">cashier-o</tk-icon>
+        <tk-icon :size="30" :name="'cashier-o'">cashier-o</tk-icon>
       </span>
       <div @click="goRecord('消费记录')" class="border-r">
         <p>{{consumptions.length}}</p>
@@ -172,6 +172,20 @@ export default {
         this.$store.commit('setDeviceInfo', device.results[0])
         this.deviceInfo = device.results[0]
       }
+
+      // 之前是后台进行设备刷新的，这里也先这么处理吧,刷新水机数据实在是太慢了，非常影响用户体验
+      if(!this.deviceInfo.status){
+        // refreshDevice()
+      }
+    },
+    async refreshDevice(){
+      await this.$cloudAjax.post('/index/refreshStatus', {
+        'deviceId': this.deviceInfo.deviceId,
+        'authInfo': this.deviceInfo.authInfo,
+        'objectId': this.deviceInfo.objectId
+      }).catch((e) => {
+        Toast.fail('设备刷新失败')
+      })
     },
     back () {
       this.$route.back()
@@ -247,9 +261,9 @@ export default {
     background: #fff;
     >span {
       display: inline-block;
-      width:20%;
+      width:15%;
       height:100%;
-      padding: 20px;
+      padding: 25px;
     }
     >div{
       width:40%;
@@ -349,7 +363,7 @@ export default {
       .status-relative {
         width:100%;
         position:absolute;
-        top:25px;
+        top:20px;
         font-size:16px;
         color:#fff;
         text-align: center;

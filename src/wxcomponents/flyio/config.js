@@ -1,7 +1,7 @@
 export default {
   // 关于接口loading的配置
   loading: {
-    limitTime: 200, // 接口请求在xxxms内完成则不展示loading
+    limitTime: 100, // 接口请求在xxxms内完成则不展示loading
     loadingShow: () => {
       wx.showLoading({
         title: '加载中',

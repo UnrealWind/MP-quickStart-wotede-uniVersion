@@ -66,7 +66,7 @@ export default {
       // 安卓刘海屏未测试，ios刘海屏未测试，ios未测试
       let sysinfo = wx.getSystemInfoSync()
       let height = wx.getMenuButtonBoundingClientRect().top - wx.getSystemInfoSync().statusBarHeight
-      sysinfo.system.indexOf('iOS') > -1 ? height += 24 : height += 30
+      sysinfo.system.indexOf('iOS') > -1 ? height += 25 : height += 30
       if (status === 'success') this.status = 'success'
       return `padding:${height}px 10px 15px 10px;`
     }
