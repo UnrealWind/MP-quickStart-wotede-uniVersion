@@ -89,6 +89,10 @@ export default {
       let that = this
       wx.scanCode({
         success: async (res) => {
+          this.$store.commit('setMchInfo', {
+            mchId:that.getQueryString(res.path, 'mchId'),
+            authInfo:that.getQueryString(res.path, 'authInfo')
+          })
           // res 中包含了mchId 以及 authInfo
           await that.getDeviceInfo(res)
         }

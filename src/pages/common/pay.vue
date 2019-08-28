@@ -138,14 +138,17 @@ export default {
     // 打水
     async pay () {
       let that = this
-      console.log(this.amount)
       let amount = Number(this.amount.label)
       let openId = this.$store.state.userInfo.openId
+
+      this.createOrder(amount, '', openId, false)
+
       let res = await this.$cloudAjax.get('/wechat/mpPay', {
         // mbd 微信这一会儿i一会儿I 真jr服气
         openid: openId,
         total_fee: amount * 100,
-        mchId: this.$store.state.mchInfo.mchId
+        mchId: this.$store.state.mchInfo.mchId,
+        type:'payWater'
       })
       wx.requestPayment({
         timeStamp: res.data.timeStamp + '', // 时间戳
@@ -154,10 +157,15 @@ export default {
         signType: 'MD5', // 签名算法
         paySign: res.data.paySign, // 签名
         success (callback) {
-          that.createOrder(amount, String(res.data.orderId), openId, true)
+          //that.createOrder(amount, String(res.data.orderId), openId, true)
+          let path = '/pages/common/paySuccess'
+          let query = {
+            amount: amount
+          }
+          this.$route.push(path, query)
         },
         fail (err) {
-          that.createOrder(amount, String(res.data.orderId), openId, false)
+          //that.createOrder(amount, String(res.data.orderId), openId, false)
         }
       })
     },

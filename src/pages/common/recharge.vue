@@ -108,31 +108,52 @@ export default {
     back () {
       setTimeout(this.$route.back(), 1000)
     },
+    getQueryString (url, name) {
+      let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+      if (!url.split('?')[1]) return null
+      let r = url.split('?')[1].match(reg)
+      if (r != null) return decodeURI(r[2]); return null
+    },
     // 充值
     async recharge () {
       let that = this
-      let amount = 0
-      this.selfAmount ? amount = this.selfAmount : amount = Number(this.amount.recharge) + Number(this.amount.gift)
-      let openId = this.$store.state.userInfo.openId
-      let res = await this.$cloudAjax.get('/wechat/mpPay', {
-        // mbd 微信这一会儿i一会儿I 真jr服气
-        openid: openId,
-        total_fee: Number(this.amount.recharge) * 100,
-        mchId: this.$store.state.mchInfo.mchId
-      })
-      wx.requestPayment({
-        timeStamp: res.data.timeStamp + '', // 时间戳
-        nonceStr: res.data.nonceStr, // 随机字符串
-        package: 'prepay_id=' + res.data.package, // repay_id
-        signType: 'MD5', // 签名算法
-        paySign: res.data.paySign, // 签名
-        success (callback) {
-          that.createOrder(amount, String(res.data.orderId), openId, true)
-        },
-        fail (err) {
-          that.createOrder(amount, String(res.data.orderId), openId, false)
-        }
-      })
+      let cont = async ()=>{
+        let amount = 0
+        this.selfAmount ? amount = this.selfAmount : amount = Number(this.amount.recharge) + Number(this.amount.gift)
+        let openId = this.$store.state.userInfo.openId
+        let res = await this.$cloudAjax.get('/wechat/mpPay', {
+          // mbd 微信这一会儿i一会儿I 真jr服气
+          openid: openId,
+          total_fee: Number(this.amount.recharge) * 100,
+          mchId: this.$store.state.mchInfo.mchId
+        })
+        wx.requestPayment({
+          timeStamp: res.data.timeStamp + '', // 时间戳
+          nonceStr: res.data.nonceStr, // 随机字符串
+          package: 'prepay_id=' + res.data.package, // repay_id
+          signType: 'MD5', // 签名算法
+          paySign: res.data.paySign, // 签名
+          success (callback) {
+            that.createOrder(amount, String(res.data.orderId), openId, true)
+          },
+          fail (err) {
+            that.createOrder(amount, String(res.data.orderId), openId, false)
+          }
+        })
+      }
+      if(!this.$store.state.mchInfo.mchId){
+        wx.scanCode({
+          success: async (res) => {
+            this.$store.commit('setMchInfo', {
+              mchId:that.getQueryString(res.path, 'mchId'),
+              authInfo:that.getQueryString(res.path, 'authInfo')
+            })
+            cont()
+          }
+        })
+      }else{
+        cont()
+      }
     },
     async rechargeDevice (amount, orderId) {
       let success = await this.$tkParse.put(`/classes/devices/${this.$store.state.deviceInfo.objectId}`, {
@@ -195,9 +216,12 @@ export default {
   created () {
 
   },
-  onShow () {
+  mounted(){
     // 调用应用实例的方法获取全局数据
     this.init()
+  },
+  onShow () {
+
   },
   onLoad () {
 
