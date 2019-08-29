@@ -15,8 +15,8 @@
           </van-tag>
         </view>
         <view >
-          <p class="blue" v-if="consumption.flow">{{consumption.flow}}升</p>
-          <p class="blue" v-else>0升</p>
+          <p class="blue" v-if="consumption.flow">{{consumption.flow}}毫升</p>
+          <p class="blue" v-else>0毫升</p>
         </view>
       </van-cell>
     </div>

@@ -61,7 +61,7 @@ export default {
     async init () {
       this.type = this.$root.$mp.query.type
       this.cardId = this.$root.$mp.query.cardId || 0
-      this.preAmount = this.$root.$mp.query.preAmount
+      this.$root.$mp.query.preAmount === 'undefined'?this.preAmount = 0:this.preAmount = this.$root.$mp.query.preAmount
       this.deviceInfo = this.$store.state.deviceInfo
       try {
         await this.getRecharge()
@@ -191,6 +191,7 @@ export default {
       if(payStatus) this.type === '水卡充值' ? this.rechargeCard(amount) : this.rechargeDevice(amount, res.objectId)
     },
     async rechargeCard (amount) {
+      console.log(amount,this.preAmount)
       let success = await this.$tkParse.put(`/classes/cards/${this.cardId}`, {
         'amount': amount + Number(this.preAmount)
       }).catch(e => {
