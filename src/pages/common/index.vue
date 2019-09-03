@@ -53,7 +53,8 @@ export default {
       wrap: true,
       // imgSrc: '/assets/img/notfound.jpg',
       imgSrc: '',
-      cardList: []
+      cardList: [],
+      hasLogin:false
     }
   },
   components: {
@@ -62,7 +63,7 @@ export default {
   methods: {
     async init () {
       try {
-        await this.getUserInfo()
+        // await this.getUserInfo()
         await this.getAdvertise()
       } catch (e) {
         this.status = 'error'
@@ -71,6 +72,7 @@ export default {
     },
     async getAdvertise () {
       let res = await this.$tkParse.get('/classes/advertise', {})
+      this.status = 'success'
       this.imgSrc = res.results[0].image
     },
     async getCardInfo () {
@@ -86,11 +88,32 @@ export default {
       this.cardList = res.results
     },
     goMachineInfo () {
+      if(!this.hasLogin){
+        this.goAuthPage()
+      }else{
+        this.scanCode()
+      }
+    },
+    async scanCode(){
       let that = this
       wx.scanCode({
         success: async (res) => {
-          this.$store.commit('setMchInfo', {
-            mchId:that.getQueryString(res.path, 'mchId'),
+          let device = await this.$tkParse.get('/classes/devices', {
+            params: {
+              where: {
+                authInfo: that.getQueryString(res.path, 'authInfo')
+              }
+            }
+          })
+          let userinfo = await this.$tkParse.get('/classes/config', {
+            params: {
+              where: {
+                user: device.results[0].user
+              }
+            }
+          })
+          that.$store.commit('setMchInfo', {
+            mchId:userinfo.results[0].mchId,
             authInfo:that.getQueryString(res.path, 'authInfo')
           })
           // res 中包含了mchId 以及 authInfo
@@ -123,10 +146,13 @@ export default {
       this.$route.push(path, query)
     },
     bindCard () {
-      let path = '/pages/common/bindCard'
-      this.$route.push(path)
+      if(!this.hasLogin){
+        this.goAuthPage()
+      }else{
+        let path = '/pages/common/bindCard'
+        this.$route.push(path)
+      }
     },
-
     // 验证授权自动授权后续抽成组件
     async getUserInfo () {
       let that = this
@@ -135,11 +161,14 @@ export default {
           if (res.authSetting['scope.userInfo']) {
             that.login()
           } else {
-            let path = '/pages/common/authorization'
-            that.$route.push(path)
+
           }
         }
       })
+    },
+    goAuthPage(){
+      let path = '/pages/common/authorization'
+      this.$route.push(path)
     },
     async login () {
       let that = this
@@ -179,10 +208,36 @@ export default {
   },
   onShow () {
     // 调用应用实例的方法获取全局数据
+    let that = this
+    wx.getSetting({
+      success (res) {
+        if (res.authSetting['scope.userInfo']) {
+          that.login()
+          that.hasLogin = true
+        } else {
+
+        }
+      }
+    })
     this.init()
   },
-  onLoad (options) {
-    if (options) {
+  async onLoad (options) {
+    if (options && options.authInfo) {
+      let device = await this.$tkParse.get('/classes/devices', {
+        params: {
+          where: {
+            authInfo: options.authInfo
+          }
+        }
+      })
+      let userinfo = await this.$tkParse.get('/classes/config', {
+        params: {
+          where: {
+            user: device.results[0].user
+          }
+        }
+      })
+      options['mchId'] = userinfo.results[0].mchId
       this.$store.commit('setMchInfo', options)
     }
   }

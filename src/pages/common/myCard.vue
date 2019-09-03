@@ -62,7 +62,7 @@ export default {
       let lossRecord = await this.$tkParse.get('/classes/lossRecord', {
         params: {
           where: {
-            lossCard: this.cardId,
+            lossCard: this.card.objectId,
             status: {
               $ne: 'cancel'
             }

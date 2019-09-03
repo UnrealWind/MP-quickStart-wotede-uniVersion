@@ -1,7 +1,12 @@
 <template>
   <tk-container :status="status">
     <div slot="header">
-      沃特德
+      <div slot="header">
+        <div @click="back" class="back" >
+          <tk-icon :size="18" :name="'arrow-left'"></tk-icon>
+        </div>
+        沃特德
+      </div>
     </div>
     <div >
       <div class="bind-card">

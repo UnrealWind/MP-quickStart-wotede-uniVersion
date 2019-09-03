@@ -144,8 +144,22 @@ export default {
       if(!this.$store.state.mchInfo.mchId){
         wx.scanCode({
           success: async (res) => {
-            this.$store.commit('setMchInfo', {
-              mchId:that.getQueryString(res.path, 'mchId'),
+            let device = await this.$tkParse.get('/classes/devices', {
+              params: {
+                where: {
+                  authInfo: that.getQueryString(res.path, 'authInfo')
+                }
+              }
+            })
+            let userinfo = await this.$tkParse.get('/classes/config', {
+              params: {
+                where: {
+                  user: device.results[0].user
+                }
+              }
+            })
+            that.$store.commit('setMchInfo', {
+              mchId:userinfo.results[0].mchId,
               authInfo:that.getQueryString(res.path, 'authInfo')
             })
             cont()
