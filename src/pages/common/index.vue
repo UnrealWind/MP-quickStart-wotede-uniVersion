@@ -5,7 +5,7 @@
         <tk-image :src="imgSrc" :width="'100%'" :height="'170px'"></tk-image>
       </div>
       <div class="cell-card">
-        <h2>我的水卡
+        <h2 @click="test">我的水卡
           <span @click="bindCard"><span class="icon-plus">+</span>绑定</span>
         </h2>
         <div v-if="cardList.length>0">
@@ -69,6 +69,9 @@ export default {
         this.status = 'error'
         throw e
       }
+    },
+    test(){
+
     },
     async getAdvertise () {
       let res = await this.$tkParse.get('/classes/advertise', {})

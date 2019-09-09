@@ -8,10 +8,12 @@ import TkContainer from './components/tkContainer'
 import TkIcon from './components/tkIcon'
 import TkImage from './components/tkImage'
 import store from './store'
+import scan from './wxcomponents/tkScan'
 
 Vue.use(tkParse)
 Vue.use(cloudAjax)
 Vue.use(route)
+Vue.use(scan)
 
 Vue.config.productionTip = false
 Vue.prototype.$serverUrl = 'https://unidemo.dcloud.net.cn';

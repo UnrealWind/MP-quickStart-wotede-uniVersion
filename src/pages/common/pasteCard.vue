@@ -65,6 +65,9 @@ export default {
       }).catch(e => {})
       await this.bind(bindData)
     },
+    judgeCard(cardId){
+
+    },
     async bind (card) {
       let cardId = card.value.card_id
       let type = card.value.card_type
@@ -94,26 +97,7 @@ export default {
           this.back()
         })
       } else {
-        let card = cards.results[0]
-        let success = await this.$tkParse.put(`/classes/cards/${card.objectId}`, {
-          'customer': {
-            className: 'customers',
-            objectId: this.customer.objectId,
-            __type: 'Pointer'
-          },
-          'device': {
-            className: 'devices',
-            objectId: this.device.objectId,
-            __type: 'Pointer'
-          }
-        }).catch(e => {
-          Toast.fail('绑定失败！')
-          this.back()
-        })
-        if (success) {
-          Toast.success('绑定成功！')
-          this.back()
-        }
+        Toast.fail('卡片已绑定！')
       }
     },
     back () {
