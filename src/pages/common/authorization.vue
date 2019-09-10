@@ -27,6 +27,7 @@
 // 这个以后封组件,ps 这里必须使用相对路径
 // 授权这套以后封装，现在先都放在这
 import Toast from '@/static/vant-weapp/dist/toast/toast'
+import config from '../../config'
 export default {
   data () {
     return {
@@ -66,6 +67,9 @@ export default {
           wx.getUserInfo({
             success: async (userInfo) => {
               userInfo['code'] = code.code
+              // 这里读取小程序的默认配置
+              userInfo['wechatId'] = config.wechatId
+              userInfo['wechatSecret'] = config.wechatSecret
               let callback = await that.$cloudAjax.get('/wechat/getUser', userInfo)
               that.userAuth(callback)
             }

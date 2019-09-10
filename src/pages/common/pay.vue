@@ -59,7 +59,7 @@
 </template>
 
 <script>
-
+import config from '../../config'
 export default {
   data () {
     return {
@@ -148,7 +148,9 @@ export default {
         openid: openId,
         total_fee: amount * 100,
         mchId: this.$store.state.mchInfo.mchId,
-        type:'payWater'
+        type:'payWater',
+        wechatId: config.wechatId,
+        wechatSecret: config.wechatSecret
       })
       wx.requestPayment({
         timeStamp: res.data.timeStamp + '', // 时间戳

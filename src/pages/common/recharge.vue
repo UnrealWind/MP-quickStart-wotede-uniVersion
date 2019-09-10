@@ -41,6 +41,8 @@
 
 <script>
 import Toast from '@/static/vant-weapp/dist/toast/toast'
+import config from '../../config'
+
 export default {
   data () {
     return {
@@ -125,7 +127,9 @@ export default {
           // mbd 微信这一会儿i一会儿I 真jr服气
           openid: openId,
           total_fee: Number(this.amount.recharge) * 100,
-          mchId: this.$store.state.mchInfo.mchId
+          mchId: this.$store.state.mchInfo.mchId,
+          wechatId: config.wechatId,
+          wechatSecret: config.wechatSecret
         })
         wx.requestPayment({
           timeStamp: res.data.timeStamp + '', // 时间戳

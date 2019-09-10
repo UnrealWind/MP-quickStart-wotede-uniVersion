@@ -42,6 +42,8 @@
 
 <script>
 import Toast from '@/static/vant-weapp/dist/toast/toast'
+import config from '../../config'
+
 export default {
   // 如果是单独想使用配置，在这里进行配置即可
   config: {
@@ -180,6 +182,10 @@ export default {
           wx.getUserInfo({
             success: async (userInfo) => {
               userInfo['code'] = code.code
+              // 这里读取小程序的默认配置
+              userInfo['wechatId'] = config.wechatId
+              userInfo['wechatSecret'] = config.wechatSecret
+
               let callback = await that.$cloudAjax.get('/wechat/getUser', userInfo)
               that.userInfo = callback.data
               let res = await that.$tkParse.get('/classes/customers', {
