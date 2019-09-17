@@ -37,6 +37,11 @@
         </van-button>
       </div>
       <van-toast id="van-toast" />
+      <tk-cover :show="true" :color="'rgba(0,0,0,0.5)'">
+        <van-button slot="button" type="info" size="large">
+          <tk-icon :size="20" :name="'scan'">scan</tk-icon>扫水机码
+        </van-button>
+      </tk-cover>
     </tk-container>
 </template>
 

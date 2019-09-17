@@ -22,7 +22,11 @@
       <div class="scroll">
         <slot ></slot>
       </div>
+      <slot name="body-cover" class="body-cover">
+
+      </slot>
     </main>
+    <div  v-if="status === 'loading'" class="cover-translucent"></div>
     <footer v-if="tabbar" class="footer">
       <van-tabbar :active="active" bind:change="onChange">
         <van-tabbar-item name="home" icon="home-o">首页</van-tabbar-item>
@@ -87,6 +91,18 @@ export default {
     width: 100%;
     height:100%;
     background: #eee;
+  }
+  .cover-translucent {
+    width:100%;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+    z-index:1000;
+  }
+  .body-cover {
+    width:100%;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+    z-index:1000;
   }
   .back {
     display: inline-block;
