@@ -42,10 +42,11 @@
             @click="chose(card)"
           >
             <van-radio :name="card.cardId" />
-            <view class="van-cell-text"></view>
-            <view slot="title">
-              <view class="van-cell-text">卡号：{{card.cardId}} </view>
-              <van-tag type="danger">&nbsp;&nbsp;¥：{{card.amount}}</van-tag>
+            <view slot="title" style="width:150%">
+              <view class="van-cell-text">卡号：{{card.cardId}}
+                <van-tag class="margin-left" type="danger" v-if="card.amount">¥：{{card.amount}}</van-tag>
+                <van-tag class="margin-left" type="danger" v-else>¥：0</van-tag>
+              </view>
             </view>
           </van-cell>
         </van-cell-group>
@@ -55,11 +56,13 @@
       <van-button v-if="payWay === 'wx'" @click="pay" type="primary" size="large">立即支付</van-button>
       <van-button v-else @click="cardPay" type="primary" size="large">立即支付</van-button>
     </div>
+    <van-toast id="van-toast" />
   </tk-container>
 </template>
 
 <script>
 import config from '../../config'
+import Toast from '@/static/vant-weapp/dist/toast/toast'
 export default {
   data () {
     return {
@@ -164,7 +167,7 @@ export default {
           let query = {
             amount: amount
           }
-          this.$route.push(path, query)
+          that.$route.push(path, query)
         },
         fail (err) {
           //that.createOrder(amount, String(res.data.orderId), openId, false)
@@ -216,8 +219,7 @@ export default {
       await this.$tkParse.post('/classes/consumption', record).catch((e) => {
         throw e
       })
-
-      if(payStatus) this.PayWater(amount, res.objectId, 'scanCode')
+      // if(payStatus) this.PayWater(amount, res.objectId, 'scanCode')
     },
     async PayWater (amount, orderId, payWay) {
       let res = await this.$cloudAjax.post(`/index/${payWay}`, {
@@ -225,7 +227,6 @@ export default {
         deviceId: this.deviceInfo.deviceId,
         authInfo: this.deviceInfo.authInfo
       })
-
       if (res) {
         this.$tkParse.put(`/classes/devices/${this.deviceInfo.objectId}`, {
           'balance': Number(this.deviceInfo.balance) - amount
@@ -244,7 +245,10 @@ export default {
     },
     async cardPay (card) {
       // 此处提示余额不足
-      if (Number(this.targetCard.amount) - Number(this.amount.label) < 0) return
+      if (!this.targetCard.amount || (Number(this.targetCard.amount) - Number(this.amount.label) < 0)){
+        Toast.fail('余额不足！')
+        return
+      }
       let openId = this.$store.state.userInfo.openId
       let timeStamp = new Date().getTime()
       await this.createOrder(Number(this.amount.label), String(timeStamp), openId, true)
@@ -270,6 +274,9 @@ export default {
 </script>
 
 <style lang=scss>
+  .margin-left {
+    margin-left:20px;
+  }
   .main{
     background-color: #fff;
   }

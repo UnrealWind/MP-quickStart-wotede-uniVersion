@@ -85,9 +85,17 @@ export default {
       if (!cards) return
       if (cards.results.length === 0) {
         await this.$tkParse.post('/classes/cards', {
-          'customer': this.customer.objectId,
+          'customer': {
+            className: 'customers',
+            objectId: this.customer.objectId,
+            __type: 'Pointer'
+          },
           'cardId': cardId,
-          'device': this.device.objectId,
+          'device': {
+            className: 'devices',
+            objectId: this.device.objectId,
+            __type: 'Pointer'
+          },
           'virtualCard': virtualCard
         }).then(() => {
           Toast.success('绑定成功！')

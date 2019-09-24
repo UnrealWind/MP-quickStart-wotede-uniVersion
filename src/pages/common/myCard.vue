@@ -74,7 +74,16 @@ export default {
           loss: true
         })
         await this.$tkParse.post('/classes/lossRecord', {
-          lossCard: this.card.objectId,
+          lossCard: {
+              className: 'cards',
+              objectId: this.card.objectId,
+              __type: 'Pointer'
+          },
+          rechargeCard: {
+            className: 'cards',
+            objectId: '',
+            __type: 'Pointer'
+          },
           amount: this.card.amount,
           status: 'suspending'
         })
