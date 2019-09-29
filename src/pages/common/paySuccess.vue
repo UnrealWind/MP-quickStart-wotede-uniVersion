@@ -7,7 +7,7 @@
       支付成功
     </div>
     <div class="bind-card">
-      <tk-icon :size="60" :color="'rgba(0, 146, 255, 1)'">gold-coin</tk-icon>
+      <tk-icon :size="60" :color="'rgba(0, 146, 255, 1)'" :name="'gold-coin'">gold-coin</tk-icon>
       <h3 class="blue">{{amount}}</h3>
       <h4>支付成功</h4>
       <ul>

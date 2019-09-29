@@ -32,6 +32,7 @@
     "@dcloudio/uni-mp-toutiao": "0.0.352",
     "@dcloudio/uni-mp-weixin": "0.0.973",
     "flyio": "^0.6.2",
+    "parse-svg-path": "^0.1.2",
     "regenerator-runtime": "^0.12.1",
     "vue": "^2.6.10",
     "vuex": "^3.0.1"

@@ -33,7 +33,7 @@
       </van-radio-group>
     </div>
     <div class="btn-box">
-      <van-button @click="recharge" type="primary" size="large">立即充值</van-button>
+      <van-button @click="recharge" type="info" size="large">立即充值</van-button>
     </div>
     <van-toast id="van-toast" />
   </tk-container>

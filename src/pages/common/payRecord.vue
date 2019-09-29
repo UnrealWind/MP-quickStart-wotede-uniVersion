@@ -25,7 +25,7 @@
         <view slot="title">
           <view class="van-cell-text">微信充值</view>
           <van-tag class="ti-title">
-            <span>{{order.createAt|date}}</span>
+            <span>{{order.createdAt|date}}</span>
           </van-tag>
         </view>
         <view >

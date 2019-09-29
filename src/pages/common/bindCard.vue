@@ -7,7 +7,7 @@
       绑定水卡
     </div>
     <div class="bind-card">
-      <tk-icon :size="40">credit-pay</tk-icon>
+      <tk-icon :size="40" :name="'credit-pay'">credit-pay</tk-icon>
       <h3>绑卡流程</h3>
       <ul>
         <li>

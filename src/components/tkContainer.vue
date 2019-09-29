@@ -4,13 +4,13 @@
       <van-loading size="50px" color="#666" />
     </div>
     <div v-if="status === 'error'" class="cover error">
-      <tk-icon>warning-o</tk-icon>
+      <tk-icon :name="'warning-o'">warning-o</tk-icon>
       <p>加载错误</p>
       <van-button @click="reload" type="default" size="normal" btnClass="mb15">重新加载</van-button>
     </div>
     <div v-if="status === 'empty'" class="cover empty">
       <p>没有找到数据哦 (*￣︶￣*)</p>
-      <tk-icon>smile-comment-o</tk-icon>
+      <tk-icon :name="'smile-comment-o'">smile-comment-o</tk-icon>
     </div>
     <div v-if="status === 'waiting'" class="cover waiting">
       <van-loading size="50px" color="#666" />
@@ -18,7 +18,7 @@
     <header v-if="customNavBarH" :style="customNavBarH" class="header">
       <slot name="header"></slot>
     </header>
-    <main class="main" v-if="status === 'success'">
+    <main class="main" v-if="status === 'success'" :style="customMain">
       <div class="scroll">
         <slot ></slot>
       </div>
@@ -59,6 +59,11 @@ export default {
       default: {}
     }
   },
+  data () {
+    return {
+      height:0
+    }
+  },
   computed: {
     customNavBarH () {
       // 不论如何这里都要变成loading状态.
@@ -70,9 +75,14 @@ export default {
       // 安卓刘海屏未测试，ios刘海屏未测试，ios未测试
       let sysinfo = wx.getSystemInfoSync()
       let height = wx.getMenuButtonBoundingClientRect().top - wx.getSystemInfoSync().statusBarHeight
+      this.height = height
       sysinfo.system.indexOf('iOS') > -1 ? height += 25 : height += 30
       if (status === 'success') this.status = 'success'
       return `padding:${height}px 10px 15px 10px;`
+
+    },
+    customMain(){
+      return `margin-top:${this.height+70}px`
     }
   },
   methods: {
@@ -121,6 +131,10 @@ export default {
     font-weight:500;
     line-height:32px;
     height:32px;
+    position: fixed;
+    top:0;
+    width:100%;
+    z-index: 100;
     van-icon {
       position: relative;
       top:3px;

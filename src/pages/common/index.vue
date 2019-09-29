@@ -10,15 +10,15 @@
         </h2>
         <div v-if="cardList.length>0">
           <van-cell @click="goCardInfo(card.cardId)" v-for="(card,index) in cardList" :key="index" center="true">
-          <span class="myCard-icon" slot="icon" >
-            <tk-icon :size="24" :color="'#fff'" :name="'idcard'"></tk-icon>
-          </span>
+            <span class="myCard-icon" slot="icon" >
+              <tk-icon :material="true" :size="24" :color="'#fff'" :name="'idcard'"></tk-icon>
+            </span>
             <view slot="title">
               <view class="van-cell-text">卡号：{{card.cardId}}</view>
               <van-tag type="danger">
                 <span>余额：</span>
                 <span class="red">¥
-                  <!--mpvue木有filter 就这么处理一哈-->
+                  <!--mpvue木有filter 就这么处理一哈  ps：换了uniapp有fileter了，可以优化相关的地方-->
                   <span v-if="card.amount">{{card.amount}}</span>
                   <span v-else>0</span>
                 </span>
@@ -52,7 +52,7 @@ import config from '../../config'
 export default {
   // 如果是单独想使用配置，在这里进行配置即可
   config: {
-    'enablePullDownRefresh': true
+    'enablePullDownRefresh': false
   },
   data () {
     return {

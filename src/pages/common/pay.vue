@@ -53,8 +53,8 @@
       </van-radio-group>
     </div>
     <div class="btn-box">
-      <van-button v-if="payWay === 'wx'" @click="pay" type="primary" size="large">立即支付</van-button>
-      <van-button v-else @click="cardPay" type="primary" size="large">立即支付</van-button>
+      <van-button v-if="payWay === 'wx'" type="info" @click="pay" size="large">立即支付</van-button>
+      <van-button v-else @click="cardPay" type="info" size="large">立即支付</van-button>
     </div>
     <van-toast id="van-toast" />
   </tk-container>

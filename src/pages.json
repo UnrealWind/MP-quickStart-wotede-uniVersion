@@ -50,7 +50,7 @@
 		"navigationBarBackgroundColor": "#fff",
 		"navigationBarTitleText": "WeChat",
 		"navigationBarTextStyle": "black",
-		"enablePullDownRefresh": true,
+		"enablePullDownRefresh": false,
 		"navigationStyle": "custom",
 		"usingComponents": {
 			"van-button": "./static/vant-weapp/dist/button/index",

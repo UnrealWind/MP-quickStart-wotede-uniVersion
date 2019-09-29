@@ -81,7 +81,7 @@
       </div>
     </div>
     <div class="btn-box bottom">
-      <van-button @click="pay" type="primary" size="large">支付打水</van-button>
+      <van-button @click="pay" type="info" size="large">支付打水</van-button>
     </div>
     <van-toast id="van-toast" />
   </tk-container>
