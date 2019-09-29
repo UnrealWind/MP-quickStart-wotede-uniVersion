@@ -11,7 +11,7 @@
         <view slot="title">
           <view class="van-cell-text">{{consumption.type}}打水</view>
           <van-tag class="ti-title">
-            <span>{{consumption.createdAt}}</span>
+            <span>{{consumption.createdAt|date}}</span>
           </van-tag>
         </view>
         <view >
@@ -25,7 +25,7 @@
         <view slot="title">
           <view class="van-cell-text">微信充值</view>
           <van-tag class="ti-title">
-            <span>{{order.createAt}}</span>
+            <span>{{order.createAt|date}}</span>
           </van-tag>
         </view>
         <view >
@@ -38,7 +38,7 @@
         <view slot="title">
           <view class="van-cell-text">{{balance.type}}</view>
           <van-tag class="ti-title">
-            <span>{{balance.createdAt}}</span>
+            <span>{{balance.createdAt|date}}</span>
           </van-tag>
         </view>
         <view >
@@ -71,6 +71,16 @@ export default {
   },
   components: {
 
+  },
+  filters: {
+    date (isoString) {
+      if (isoString) {
+        let date = new Date(isoString)
+        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes()
+      } else {
+        return ''
+      }
+    }
   },
   methods: {
     async init () {

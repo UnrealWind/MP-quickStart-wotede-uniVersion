@@ -108,13 +108,21 @@ export default {
   methods: {
     async init () {
       this.deviceInfo = this.$store.state.deviceInfo
-      this.amount = this.amounts[0]
+      this.judgeAmount()
       try {
         this.getCardInfo()
       } catch (e) {
 
       }
       this.status = 'success'
+    },
+    judgeAmount(){
+      this.targetCard = {}
+      this.payWay = 'wx'
+      if(!this.amounts[0].active) return
+      this.amounts.forEach((n,i)=>{
+        if(n.active) this.amount = n
+      })
     },
     async getCardInfo () {
       let objectId = this.$store.state.userInfo.objectId
@@ -203,7 +211,7 @@ export default {
         card: null,
         device: {
           className: 'devices',
-          objectId: this.deviceInfo.deviceId,
+          objectId: this.deviceInfo.objectId,
           __type: 'Pointer'
         }
       }
@@ -219,7 +227,7 @@ export default {
       await this.$tkParse.post('/classes/consumption', record).catch((e) => {
         throw e
       })
-      // if(payStatus) this.PayWater(amount, res.objectId, 'scanCode')
+      if(payStatus) this.PayWater(amount, res.objectId, 'scanCode')
     },
     async PayWater (amount, orderId, payWay) {
       let res = await this.$cloudAjax.post(`/index/${payWay}`, {
@@ -227,16 +235,35 @@ export default {
         deviceId: this.deviceInfo.deviceId,
         authInfo: this.deviceInfo.authInfo
       })
-      if (res) {
-        this.$tkParse.put(`/classes/devices/${this.deviceInfo.objectId}`, {
-          'balance': Number(this.deviceInfo.balance) - amount
+      if (res === '制水成功') {
+        // 这里预留出来了，我看水机方面没有提供水卡支付的接口，整个流程和扫码支付是一样的
+        await this.$tkParse.put(`/classes/cards/${this.targetCard.objectId}`, {
+          'amount': Number(this.targetCard.amount) - Number(this.amount.label)
+        }).catch(e => {
+          throw e
         })
+
+        let device = await this.$tkParse.get('/classes/devices', {
+          params: {
+            where: {
+              authInfo: this.deviceInfo.authInfo
+            }
+          }
+        }).catch(() => {
+          Toast.fail('无法获取设备信息，请重试')
+        })
+        if (device) {
+          this.$store.commit('setDeviceInfo', device.results[0])
+          this.deviceInfo = device.results[0]
+        }
 
         let path = '/pages/common/paySuccess'
         let query = {
           amount: amount
         }
         this.$route.push(path, query)
+      }else{
+        Toast.fail('支付失败')
       }
     },
     chose (msg) {
@@ -251,13 +278,7 @@ export default {
       }
       let openId = this.$store.state.userInfo.openId
       let timeStamp = new Date().getTime()
-      await this.createOrder(Number(this.amount.label), String(timeStamp), openId, true)
-      // 这里预留出来了，我看水机方面没有提供水卡支付的接口，整个流程和扫码支付是一样的
-      await this.$tkParse.put(`/classes/cards/${this.targetCard.objectId}`, {
-        'amount': Number(this.targetCard.amount) - Number(this.amount.label)
-      }).catch(e => {
-
-      })
+      await this.createOrder(Number(this.amount.label),'', openId, true)
     }
   },
   created () {

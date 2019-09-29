@@ -20,11 +20,11 @@
         <tk-icon :size="30" :name="'cashier-o'">cashier-o</tk-icon>
       </span>
       <div @click="goRecord('消费记录')" class="border-r">
-        <p>{{consumptions.length}}</p>
+        <p>{{consumptions}}</p>
         <p class="font-14">消费记录</p>
       </div>
       <div @click="goRecord('充值记录')">
-        <p>{{orderList.length}}</p>
+        <p>{{orderList}}</p>
         <p class="font-14">充值记录</p>
       </div>
     </div>
@@ -43,37 +43,40 @@
         </div>
       </div>-->
     </div>
-    <div class="status">
-      <h3>运行状态</h3>
-      <div class="flex">
-        <div class="grid-3">
+    <div style="width: 100%;background-color:#fff;margin-top:10px;">
+      <h3 style="font-size:15px;
+      padding: 5px 10px;">运行状态</h3>
+      <div class="status">
+        <div class="flex">
+          <div class="grid-3">
           <span class="status-relative">
             <p>{{deviceInfo.status.tds_raw}}</p>
           </span>
-          <div class="circle bg-blue"></div>
-          <p class="status-bottom">净水TDS</p>
-        </div>
-        <div class="grid-3">
+            <div class="circle bg-blue"></div>
+            <p class="status-bottom">净水TDS</p>
+          </div>
+          <div class="grid-3">
           <span class="status-relative">
             <p>2</p>
           </span>
-          <div class="circle bg-org"></div>
-          <p class="status-bottom">漏水状态</p>
-        </div>
-        <div class="grid-3">
+            <div class="circle bg-org"></div>
+            <p class="status-bottom">漏水状态</p>
+          </div>
+          <div class="grid-3">
           <span class="status-relative">
             <p>{{deviceInfo.status.machine_tempreture}}</p>
             <p class="tiny-p">℃</p>
           </span>
-          <div class="circle bg-yellow"></div>
-          <p class="status-bottom">水机温度</p>
-        </div>
-        <div class="grid-3">
+            <div class="circle bg-yellow"></div>
+            <p class="status-bottom">水机温度</p>
+          </div>
+          <div class="grid-3">
           <span class="status-relative">
             <p>{{deviceInfo.status.Water_pressure}}</p>
           </span>
-          <div class="circle bg-green"></div>
-          <p class="status-bottom">水压</p>
+            <div class="circle bg-green"></div>
+            <p class="status-bottom">水压</p>
+          </div>
         </div>
       </div>
     </div>
@@ -115,8 +118,8 @@ export default {
         }
       ],
       deviceInfo: {},
-      consumptions: [],
-      orderList: []
+      consumptions: 0,
+      orderList: 0
     }
   },
   components: {
@@ -135,28 +138,25 @@ export default {
       this.status = 'success'
     },
     async getConsumption () {
-      let res = await this.$tkParse.get('/classes/consumption', {
+      let res = await this.$tkParse.get(`/classes/consumption/`, {
         params: {
-          where: {
-            device: this.deviceInfo.objectId
-          }
+          count: 1,
+          limit: 0
         }
       })
-      this.consumptions = res.results
-      console.log(res)
+      this.consumptions = res.count
     },
     async getOrder () {
-      let res = await this.$tkParse.get('/classes/order', {
+      let res = await this.$tkParse.get(`/classes/order/`, {
         params: {
+          count: 1,
+          limit: 0,
           where: {
             title: '水机充值'
           }
         }
-      }).catch((e) => {
-        throw e
       })
-      this.orderList = res.results
-      console.log(res)
+      this.orderList = res.count
     },
     async getDeviceInfo () {
       let device = await this.$tkParse.get('/classes/devices', {
@@ -329,17 +329,17 @@ export default {
     }
   }
   .status {
-    margin:10px 0 0 0 ;
-    width:100%;
-    height:143px;
+    margin:0 auto;
+    width:375px;
+    height:120px;
     background-color: #fff;
     h3 {
       font-size:15px;
       padding: 5px 10px;
     }
     .circle {
-      height:65px;
-      width:65px;
+      height:67px;
+      width:67px;
       -webkit-border-radius:50%;
       -moz-border-radius: 50%;
       border-radius: 50%;

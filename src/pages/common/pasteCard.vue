@@ -83,7 +83,7 @@ export default {
         this.back()
       })
       if (!cards) return
-      if (cards.results.length === 0) {
+      if (cards.results.length === 0 ) {
         await this.$tkParse.post('/classes/cards', {
           'customer': {
             className: 'customers',
