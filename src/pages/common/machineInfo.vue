@@ -17,7 +17,7 @@
     </div>
     <div class="record">
       <span>
-        <tk-icon :size="30" :name="'cashier-o'">cashier-o</tk-icon>
+        <tk-icon :size="50" :name="'http://moke-store.oss-cn-beijing.aliyuncs.com/f765192a-c095-4633-a074-58c9dd534655.png'">cashier-o</tk-icon>
       </span>
       <div @click="goRecord('消费记录')" class="border-r">
         <p>{{consumptions}}</p>
@@ -241,7 +241,8 @@ export default {
     height:120px;
     width:100%;
     text-align: center;
-    background-color: rgba(58, 184, 253, 1);
+    background-image: url("http://moke-store.oss-cn-beijing.aliyuncs.com/257e007c-5ac1-472a-a19b-1a71d4c4c39c.png");
+    background-size:100% 100%;
     padding: 30px 0;
     p {
       margin:0 0 10px 0;
@@ -263,7 +264,7 @@ export default {
       display: inline-block;
       width:15%;
       height:100%;
-      padding: 25px;
+      padding: 15px;
     }
     >div{
       width:40%;

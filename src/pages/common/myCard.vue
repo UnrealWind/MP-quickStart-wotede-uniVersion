@@ -18,13 +18,15 @@
     <div class="btn-box">
       <van-button @click="pay" type="info" size="large">充值</van-button>
     </div>
-    <p class="center" @click="lossCard">水卡挂失</p>
+    <p class="center" @click="modalLoss">水卡挂失</p>
     <van-toast id="van-toast" />
+    <van-dialog id="van-dialog" />
   </tk-container>
 </template>
 
 <script>
 import Toast from '@/static/vant-weapp/dist/toast/toast'
+import Dialog from '@/static/vant-weapp/dist/dialog/dialog';
 export default {
   data () {
     return {
@@ -57,6 +59,16 @@ export default {
         }
       })
       this.card = res.results[0]
+    },
+    modalLoss(){
+      Dialog.confirm({
+        message: `确认挂失${this.cardId}?`
+      }).then(() => {
+        // on confirm
+        this.lossCard()
+      }).catch(() => {
+        // on cancel
+      });
     },
     async lossCard(){
       let lossRecord = await this.$tkParse.get('/classes/lossRecord', {
