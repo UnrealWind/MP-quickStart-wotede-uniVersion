@@ -14,7 +14,8 @@
               <tk-icon :material="true" :size="24" :color="'#fff'" :name="'idcard'"></tk-icon>
             </span>
             <view slot="title">
-              <view class="van-cell-text">卡号：{{card.cardId}}</view>
+              <view class="van-cell-text">卡号：{{card.cardId}}
+              </view>
               <van-tag type="danger">
                 <span>余额：</span>
                 <span class="red">¥

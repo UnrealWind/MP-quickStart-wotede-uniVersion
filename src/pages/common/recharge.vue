@@ -16,6 +16,10 @@
           </div>
         </div>
       </div>
+      <span class="tk-input">
+        <tk-icon :size="18" :name="'gold-coin-o'"></tk-icon>
+        <input placeholder="自定义打水金额（最多不超过10元）" @focus="refreshSelfAmount" @input="choseSelfAmount"/>
+      </span>
     </div>
     <div class="way">
       <h3>请选择支付方式</h3>
@@ -27,6 +31,9 @@
             data-name="1"
             @click="choseA"
           >
+            <span slot="icon" class="list-icon">
+              <tk-image :src="wechatImg" :width="'20px'" :height="'18px'"></tk-image>
+            </span>
             <van-radio name="1" />
           </van-cell>
         </van-cell-group>
@@ -56,7 +63,8 @@ export default {
       amount: {},
       preAmount: null,
       deviceInfo: {},
-      card: {}
+      card: {},
+      wechatImg:'/static/assets/img/wechat.png'
     }
   },
   methods: {
@@ -71,6 +79,14 @@ export default {
         throw e
       }
       this.status = 'success'
+    },
+    choseSelfAmount(event){
+      this.payWay = null
+      this.selfAmount = event.detail.value
+    },
+    refreshSelfAmount(event){
+      this.payWay = null
+      this.selfAmount = event.detail.value
     },
     async getRecharge () {
       let d = new Date();
@@ -123,14 +139,16 @@ export default {
         let amount = 0
         this.selfAmount ? amount = this.selfAmount : amount = Number(this.amount.recharge) + Number(this.amount.gift)
         let openId = this.$store.state.userInfo.openId
-        let res = await this.$cloudAjax.get('/wechat/mpPay', {
+        let data = {
           // mbd 微信这一会儿i一会儿I 真jr服气
           openid: openId,
           total_fee: Number(this.amount.recharge) * 100,
           mchId: this.$store.state.mchInfo.mchId,
           wechatId: config.wechatId,
           wechatSecret: config.wechatSecret
-        })
+        }
+        if(this.selfAmount) data['total_fee'] = amount*100
+        let res = await this.$cloudAjax.get('/wechat/mpPay',data)
         wx.requestPayment({
           timeStamp: res.data.timeStamp + '', // 时间戳
           nonceStr: res.data.nonceStr, // 随机字符串
@@ -227,9 +245,8 @@ export default {
     },
     choseA (event) {
       const { name } = event.currentTarget.dataset
-      this.setData({
-        payWay: name
-      })
+      this.payWay = name
+      this.selfAmount = null
     }
   },
   created () {
@@ -254,6 +271,19 @@ export default {
   }
   .font-14 {
     font-size:14px;
+  }
+  .list-icon {
+    padding:2px 10px 0 0;
+  }
+  .tk-input {
+    >input {
+      display: inline-block;
+      font-size:14px;
+      width:70%;
+      position: relative;
+      top:5px;
+      left:5px;
+    }
   }
   .amounts {
     padding: 0 15px;

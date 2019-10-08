@@ -15,13 +15,10 @@
           </div>
         </div>
       </div>
-      <!--<van-cell-group>
-        <van-field
-          placeholder="自定义打水金额（最多不超过10元）"
-          left-icon="gold-coin-o"
-          :value="selfAmount"
-        />
-      </van-cell-group>-->
+      <span class="tk-input">
+        <tk-icon :size="18" :name="'gold-coin-o'"></tk-icon>
+        <input placeholder="自定义打水金额（最多不超过10元）" @focus="refreshSelfAmount" @input="choseSelfAmount"/>
+      </span>
     </div>
     <div class="way">
       <h3>请选择支付方式</h3>
@@ -33,6 +30,9 @@
             data-name="wx"
             @click="chose('wx')"
           >
+            <span slot="icon" class="list-icon">
+              <tk-image :src="wechatImg" :width="'20px'" :height="'18px'"></tk-image>
+            </span>
             <van-radio name="wx" />
           </van-cell>
           <van-cell
@@ -41,6 +41,9 @@
             :data-name="card.cardId"
             @click="chose(card)"
           >
+            <span class="list-icon" slot="icon" >
+              <tk-icon :material="true" :size="20" :color="'#1989fa'" :name="'card'"></tk-icon>
+            </span>
             <van-radio :name="card.cardId" />
             <view slot="title" style="width:150%">
               <view class="van-cell-text">卡号：{{card.cardId}}
@@ -53,7 +56,7 @@
       </van-radio-group>
     </div>
     <div class="btn-box">
-      <van-button v-if="payWay === 'wx'" type="info" @click="pay" size="large">立即支付</van-button>
+      <van-button v-if="payWay === 'wx'|| payWay === 'self'" type="info" @click="pay" size="large">立即支付</van-button>
       <van-button v-else @click="cardPay" type="info" size="large">立即支付</van-button>
     </div>
     <van-toast id="van-toast" />
@@ -95,11 +98,12 @@ export default {
         }
       ],
       payWay: 'wx',
-      selfAmount: '',
+      selfAmount: null,
       cardList: [],
       deviceInfo: {},
       amount: null,
-      targetCard: {}
+      targetCard: {},
+      wechatImg:'/static/assets/img/wechat.png'
     }
   },
   components: {
@@ -123,6 +127,14 @@ export default {
       this.amounts.forEach((n,i)=>{
         if(n.active) this.amount = n
       })
+    },
+    choseSelfAmount(event){
+      this.payWay = 'self'
+      this.selfAmount = event.detail.value
+    },
+    refreshSelfAmount(event){
+      this.payWay = 'self'
+      this.selfAmount = event.detail.value
     },
     async getCardInfo () {
       let objectId = this.$store.state.userInfo.objectId
@@ -150,6 +162,7 @@ export default {
     async pay () {
       let that = this
       let amount = Number(this.amount.label)
+      if(this.selfAmount) amount = this.selfAmount
       let openId = this.$store.state.userInfo.openId
 
       this.createOrder(amount, '', openId, false)
@@ -267,18 +280,20 @@ export default {
       }
     },
     chose (msg) {
+      this.selfAmount = null
       msg === 'wx' ? this.payWay = msg : this.payWay = msg.cardId
       if (msg !== 'wx') this.targetCard = msg
     },
     async cardPay (card) {
       // 此处提示余额不足
+      let amount = Number(this.amount.label)
       if (!this.targetCard.amount || (Number(this.targetCard.amount) - Number(this.amount.label) < 0)){
         Toast.fail('余额不足！')
         return
       }
       let openId = this.$store.state.userInfo.openId
       let timeStamp = new Date().getTime()
-      await this.createOrder(Number(this.amount.label),'', openId, true)
+      await this.createOrder(amount,'', openId, true)
     }
   },
   created () {
@@ -297,6 +312,19 @@ export default {
 <style lang=scss>
   .margin-left {
     margin-left:20px;
+  }
+  .list-icon {
+    padding:2px 10px 0 0;
+  }
+  .tk-input {
+    >input {
+      display: inline-block;
+      font-size:14px;
+      width:70%;
+      position: relative;
+      top:5px;
+      left:5px;
+    }
   }
   .main{
     background-color: #fff;
